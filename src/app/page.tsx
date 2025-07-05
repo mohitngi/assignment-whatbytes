@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { products } from "../data/products";
@@ -6,6 +8,7 @@ const categories = ["All", "Electronics", "Clothing", "Home"];
 
 export default function Home() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["All"]);
+  const [price, setPrice] = useState<number>(1000);
 
   const handleCategoryChange = (category: string) => {
     if (category === "All") {
@@ -19,10 +22,12 @@ export default function Home() {
     }
   };
 
-  const filteredProducts =
-    selectedCategories.includes("All")
-      ? products
-      : products.filter((p) => selectedCategories.includes(p.category));
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPrice(Number(e.target.value));
+  };
+
+  const filteredProducts = (selectedCategories.includes("All") ? products : products.filter((p) => selectedCategories.includes(p.category)))
+    .filter((p) => p.price <= price);
 
   return (
     <div className="flex gap-8 py-8">
@@ -46,10 +51,20 @@ export default function Home() {
             ))}
           </div>
         </div>
-        {/* Price range placeholder */}
+        {/* Price range filter */}
         <div>
-          <div className="font-semibold mb-2">Price</div>
-          <input type="range" min={0} max={1000} className="w-full" disabled />
+          <div className="font-semibold mb-2 flex justify-between items-center">
+            <span>Price</span>
+            <span className="text-sm text-blue-700 font-bold">${price}</span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={1000}
+            value={price}
+            onChange={handlePriceChange}
+            className="w-full accent-blue-700"
+          />
         </div>
       </aside>
       {/* Product Grid */}
