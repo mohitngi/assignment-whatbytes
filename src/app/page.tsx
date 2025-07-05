@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import ProductCard from "../components/ProductCard";
 import { products } from "../data/products";
+import { SearchContext } from "./layout";
 
 const categories = ["All", "Electronics", "Clothing", "Home"];
 
 export default function Home() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["All"]);
   const [price, setPrice] = useState<number>(1000);
+  const { searchTerm } = useContext(SearchContext);
 
   const handleCategoryChange = (category: string) => {
     if (category === "All") {
@@ -27,7 +29,13 @@ export default function Home() {
   };
 
   const filteredProducts = (selectedCategories.includes("All") ? products : products.filter((p) => selectedCategories.includes(p.category)))
-    .filter((p) => p.price <= price);
+    .filter((p) => p.price <= price)
+    .filter((p) =>
+      searchTerm.trim() === ""
+        ? true
+        : p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   return (
     <div className="flex gap-8 py-8">
