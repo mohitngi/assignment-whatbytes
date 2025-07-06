@@ -1,10 +1,13 @@
+"use client";
 import { products } from '../../../data/products';
 import { notFound } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { CartContext } from '../AppShell';
 
 export default function ProductDetail({ params }: { params: { id: string } }) {
   const product = products.find((p) => p.id === params.id);
   const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useContext(CartContext);
 
   if (!product) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -12,6 +15,10 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
       <p className="text-gray-500">Sorry, we couldn't find that product.</p>
     </div>
   );
+
+  const handleAddToCart = () => {
+    addToCart(product, quantity);
+  };
 
   return (
     <div className="flex flex-col md:flex-row gap-12 py-12">
@@ -36,7 +43,12 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             className="w-16 px-2 py-1 border rounded"
           />
         </div>
-        <button className="bg-blue-700 text-white rounded-md px-6 py-3 font-semibold hover:bg-blue-800 transition w-fit">Add to Cart</button>
+        <button 
+          className="bg-blue-700 text-white rounded-md px-6 py-3 font-semibold hover:bg-blue-800 transition w-fit"
+          onClick={handleAddToCart}
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   );

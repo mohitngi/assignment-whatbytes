@@ -1,9 +1,8 @@
 "use client";
-
 import { useState, useContext } from "react";
 import ProductCard from "../components/ProductCard";
 import { products } from "../data/products";
-import { SearchContext } from "./layout";
+import { SearchContext } from "./AppShell";
 
 const categories = ["All", "Electronics", "Clothing", "Home"];
 
@@ -31,7 +30,7 @@ export default function Home() {
   const filteredProducts = (selectedCategories.includes("All") ? products : products.filter((p) => selectedCategories.includes(p.category)))
     .filter((p) => p.price <= price)
     .filter((p) =>
-      searchTerm.trim() === ""
+      (searchTerm?.trim() ?? "") === ""
         ? true
         : p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           p.description.toLowerCase().includes(searchTerm.toLowerCase())
