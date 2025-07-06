@@ -2,7 +2,7 @@
 import { products } from '../../../data/products';
 import { notFound } from 'next/navigation';
 import { useState, useContext } from 'react';
-import { CartContext } from '../AppShell';
+import { CartContext } from '@/app/AppShell';
 
 export default function ProductDetail({ params }: { params: { id: string } }) {
   const product = products.find((p) => p.id === params.id);
