@@ -3,6 +3,7 @@ import type { Product } from '../data/products';
 import Link from 'next/link';
 import { useContext } from 'react';
 import { CartContext } from '../app/AppShell';
+import Image from 'next/image';
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useContext(CartContext);
@@ -15,7 +16,13 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/product/${product.id}`} className="block" tabIndex={-1}>
       <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center cursor-pointer hover:shadow-lg transition">
-        <img src={product.image} alt={product.title} className="w-28 h-28 object-contain mb-2" />
+        <Image 
+        src={product.image} 
+        alt={product.title} 
+        width={320}
+        height={320}      
+        className="w-28 h-28 object-contain mb-2" 
+        />
         <div className="font-semibold text-center">{product.title}</div>
         <div className="text-blue-800 font-bold mb-1">${product.price}</div>
         <div className="flex items-center mb-2">
