@@ -8,7 +8,7 @@ export default function CartPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-12">
-      <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
+      <h1 className="text-3xl font-bold mb-8 text-black">Your Cart</h1>
       {cartItems.length === 0 ? (
         <div className="text-center text-gray-500">Your cart is empty.</div>
       ) : (
@@ -23,9 +23,9 @@ export default function CartPage() {
                 className="w-20 h-20 object-contain rounded"
               />
               <div className="flex-1">
-                <div className="font-semibold">{product.title}</div>
+                <div className="font-semibold text-black">{product.title}</div>
                 <div className="text-blue-800 font-bold mb-1">${product.price}</div>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-2 mt-2 text-black">
                   <span>Qty:</span>
                   <input
                     type="number"
@@ -42,11 +42,11 @@ export default function CartPage() {
                   </button>
                 </div>
               </div>
-              <div className="font-bold text-lg">${product.price * quantity}</div>
+              <div className="font-bold text-lg text-black">${product.price * quantity}</div>
             </div>
           ))}
           <div className="flex justify-end mt-8">
-            <div className="bg-blue-100 rounded-lg px-8 py-4 text-xl font-bold">
+            <div className="bg-blue-100 rounded-lg px-8 py-4 text-xl font-bold text-black">
               Total: ${getCartTotal()}
             </div>
           </div>

@@ -4,7 +4,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ProductCard from "../components/ProductCard";
 import { products } from "../data/products";
 import { SearchContext } from "./AppShell";
-import { CartContext } from "./AppShell";
 
 const categories = ["All", "Electronics", "Clothing", "Home"];
 
@@ -12,7 +11,7 @@ export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(["All"]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [price, setPrice] = useState<number>(1000);
 
   // Initialize filter state from URL on mount
@@ -21,7 +20,7 @@ export default function Home() {
     const urlPrice = searchParams.get("price");
     const urlSearch = searchParams.get("search");
     if (urlCategory) {
-      setSelectedCategories(urlCategory.split(","));
+      setSelectedCategory(urlCategory);
     }
     if (urlPrice) {
       setPrice(Number(urlPrice));
@@ -35,8 +34,8 @@ export default function Home() {
   // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
-    if (!selectedCategories.includes("All")) {
-      params.set("category", selectedCategories.join(","));
+    if (selectedCategory !== "All") {
+      params.set("category", selectedCategory);
     }
     if (price !== 1000) {
       params.set("price", String(price));
@@ -46,25 +45,17 @@ export default function Home() {
     }
     router.replace("/?" + params.toString(), { scroll: false });
     // eslint-disable-next-line
-  }, [selectedCategories, price, searchTerm]);
+  }, [selectedCategory, price, searchTerm]);
 
   const handleCategoryChange = (category: string) => {
-    if (category === "All") {
-      setSelectedCategories(["All"]);
-    } else {
-      let updated = selectedCategories.includes(category)
-        ? selectedCategories.filter((c) => c !== category)
-        : [...selectedCategories.filter((c) => c !== "All"), category];
-      if (updated.length === 0) updated = ["All"];
-      setSelectedCategories(updated);
-    }
+    setSelectedCategory(category);
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPrice(Number(e.target.value));
   };
 
-  const filteredProducts = (selectedCategories.includes("All") ? products : products.filter((p) => selectedCategories.includes(p.category)))
+  const filteredProducts = (selectedCategory === "All" ? products : products.filter((p) => p.category === selectedCategory))
     .filter((p) => p.price <= price)
     .filter((p) =>
       (searchTerm?.trim() ?? "") === ""
@@ -74,56 +65,108 @@ export default function Home() {
     );
 
   return (
-    <div className="flex gap-8 py-8">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white rounded-lg shadow p-6 hidden lg:block">
-        <div className="font-bold text-lg mb-4">Filters</div>
-        {/* Category filter */}
-        <div className="mb-6">
-          <div className="font-semibold mb-2">Category</div>
-          <div className="flex flex-col gap-2">
-            {categories.map((cat) => (
-              <label key={cat} className="flex items-center">
+    <div className="bg-white min-h-screen">
+      <div className="max-w-7xl mx-auto px-8">
+        <div className="flex gap-8 py-8">
+          {/* Sidebar */}
+          <aside className="w-80 flex-shrink-0">
+            <div className="bg-blue-800 rounded-2xl p-8 flex flex-col gap-8 shadow-md">
+              <div className="flex items-center justify-between">
+                <h2 className="text-white text-xl font-bold">Filters</h2>
+              </div>
+              {/* Category filter */}
+              <div>
+                <div className="font-bold mb-2 text-white text-base">Category</div>
+                <div className="flex flex-col gap-3">
+                  {categories.map(cat => (
+                    <label key={cat} className="flex items-center gap-3 text-white text-base font-normal cursor-pointer select-none">
+                      <input
+                        type="radio"
+                        name="category"
+                        checked={selectedCategory === cat}
+                        onChange={() => handleCategoryChange(cat)}
+                        className="accent-blue-800 w-4 h-4 border-blue-800 border-2 focus:ring-2 focus:ring-blue-800"
+                      />
+                      {cat}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              {/* Price slider */}
+              <div className="mt-6">
+                <div className="font-bold mb-2 text-white text-base">Price</div>
+                <div className="flex items-center gap-4">
+                  <span className="text-white text-sm">0</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1000}
+                    value={price}
+                    onChange={handlePriceChange}
+                    className="w-full accent-white cursor-pointer"
+                  />
+                  <span className="text-white text-sm">${price}</span>
+                </div> 
+              </div>
+            </div>
+
+            {/* Cacyroy card */}
+            <div className="bg-white p-6 mt-8  flex flex-col gap-6">
+              <div className="font-bold text-base mb-2">Cacyroy</div>
+              <div className="flex flex-col gap-3">
+                {categories.map(cat => (
+                  <label key={cat} className="flex items-center gap-3 text-black text-base font-normal cursor-pointer select-none">
+                    <input
+                      type="radio"
+                      name="cacyroy-category"
+                      checked={selectedCategory === cat}
+                      onChange={() => handleCategoryChange(cat)}
+                      className="accent-blue-800 w-4 h-4"
+                    />
+                    {cat}
+                  </label>
+                ))}
+              </div>
+              <div className="mt-4">
+                <div className="font-bold mb-2 text-base">Price</div>
                 <input
-                  type="checkbox"
-                  className="mr-2"
-                  checked={selectedCategories.includes(cat)}
-                  onChange={() => handleCategoryChange(cat)}
+                  type="number"
+                  min={0}
+                  max={1000}
+                  value={price}
+                  onChange={handlePriceChange}
+                  className="w-full px-3 py-2 border-2 rounded-lg text-black text-base focus:outline-none  bg-white"
                 />
-                {cat}
-              </label>
-            ))}
-          </div>
+              </div>
+            </div>
+          </aside>
+          {/* Product Grid */}
+          <main className="flex-1">
+            <h1 className="text-2xl font-bold mb-6">Product Listing</h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProducts.length === 0 ? (
+                <div className="col-span-full text-center text-gray-500">No products found.</div>
+              ) : (
+                filteredProducts.map((product, idx) => {
+                  const isLast = idx === filteredProducts.length - 1;
+                  return (
+                    <div
+                      key={product.id}
+                      className={
+                        isLast
+                          ? 'lg:col-span-2 lg:col-start-2'
+                          : ''
+                      }
+                    >
+                      <ProductCard product={product} featured={isLast} />
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </main>
         </div>
-        {/* Price range filter */}
-        <div>
-          <div className="font-semibold mb-2 flex justify-between items-center">
-            <span>Price</span>
-            <span className="text-sm text-blue-700 font-bold">${price}</span>
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={1000}
-            value={price}
-            onChange={handlePriceChange}
-            className="w-full accent-blue-700"
-          />
-        </div>
-      </aside>
-      {/* Product Grid */}
-      <section className="flex-1">
-        <h1 className="text-2xl font-bold mb-6">Product Listing</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.length === 0 ? (
-            <div className="col-span-full text-center text-gray-500">No products found.</div>
-          ) : (
-            filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))
-          )}
-        </div>
-      </section>
+      </div>
     </div>
   );
 }
