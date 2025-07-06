@@ -1,15 +1,52 @@
 "use client";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import ProductCard from "../components/ProductCard";
 import { products } from "../data/products";
 import { SearchContext } from "./AppShell";
+import { CartContext } from "./AppShell";
 
 const categories = ["All", "Electronics", "Clothing", "Home"];
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { searchTerm, setSearchTerm } = useContext(SearchContext);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["All"]);
   const [price, setPrice] = useState<number>(1000);
-  const { searchTerm } = useContext(SearchContext);
+
+  // Initialize filter state from URL on mount
+  useEffect(() => {
+    const urlCategory = searchParams.get("category");
+    const urlPrice = searchParams.get("price");
+    const urlSearch = searchParams.get("search");
+    if (urlCategory) {
+      setSelectedCategories(urlCategory.split(","));
+    }
+    if (urlPrice) {
+      setPrice(Number(urlPrice));
+    }
+    if (urlSearch !== null) {
+      setSearchTerm(urlSearch);
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (!selectedCategories.includes("All")) {
+      params.set("category", selectedCategories.join(","));
+    }
+    if (price !== 1000) {
+      params.set("price", String(price));
+    }
+    if (searchTerm.trim() !== "") {
+      params.set("search", searchTerm);
+    }
+    router.replace("/?" + params.toString(), { scroll: false });
+    // eslint-disable-next-line
+  }, [selectedCategories, price, searchTerm]);
 
   const handleCategoryChange = (category: string) => {
     if (category === "All") {
