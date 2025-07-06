@@ -1,8 +1,8 @@
 "use client";
 import { products } from '../../../data/products';
-import { notFound } from 'next/navigation';
 import { useState, useContext } from 'react';
 import { CartContext } from '@/app/AppShell';
+import Image from 'next/image';
 
 export default function ProductDetail({ params }: { params: { id: string } }) {
   const product = products.find((p) => p.id === params.id);
@@ -24,7 +24,13 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     <div className="flex flex-col md:flex-row gap-12 py-12">
       {/* Image Section */}
       <div className="flex-1 flex items-center justify-center">
-        <img src={product.image} alt={product.title} className="w-80 h-80 object-contain rounded-lg bg-white shadow" />
+        <Image 
+          src={product.image} 
+          alt={product.title} 
+          width={320}
+          height={320}
+          className="object-contain rounded-lg bg-white shadow" 
+        />
       </div>
       {/* Details Section */}
       <div className="flex-1 flex flex-col gap-4">
