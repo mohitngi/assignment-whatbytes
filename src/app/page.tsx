@@ -1,5 +1,5 @@
 "use client";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProductCard from "../components/ProductCard";
 import { products } from "../data/products";
@@ -7,7 +7,7 @@ import { SearchContext } from "./AppShell";
 
 const categories = ["All", "Electronics", "Clothing", "Home"];
 
-export default function Home() {
+function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
@@ -168,5 +168,17 @@ export default function Home() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="bg-white min-h-screen flex items-center justify-center">
+        <div className="text-xl">Loading...</div>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }

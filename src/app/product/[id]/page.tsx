@@ -1,18 +1,26 @@
 "use client";
-import { products } from '../../../data/products';
-import { useState, useContext } from 'react';
+import { products, Product } from '../../../data/products';
+import { useState, useContext, useEffect } from 'react';
 import { CartContext } from '@/app/AppShell';
 import Image from 'next/image';
 
-export default function ProductDetail({ params }: { params: { id: string } }) {
-  const product = products.find((p) => p.id === params.id);
+export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
+  const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useContext(CartContext);
 
+  useEffect(() => {
+    const loadProduct = async () => {
+      const resolvedParams = await params;
+      const foundProduct = products.find((p) => p.id === resolvedParams.id);
+      setProduct(foundProduct || null);
+    };
+    loadProduct();
+  }, [params]);
+
   if (!product) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
-      <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
-      <p className="text-gray-500">Sorry, we couldn&apos;t find that product.</p>
+      <h1 className="text-2xl font-bold mb-4">Loading...</h1>
     </div>
   );
 
