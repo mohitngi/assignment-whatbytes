@@ -73,6 +73,18 @@ function HomeContent() {
             <div className="bg-blue-800 rounded-2xl p-8 flex flex-col gap-8 shadow-md">
               <div className="flex items-center justify-between">
                 <h2 className="text-white text-xl font-bold">Filters</h2>
+                <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategory('All');
+                  setPrice(1000);
+                  setSearchTerm("");
+                }}
+                className="ml-2 flex items-center gap-1 bg-white/10 border border-white/30 text-white font-semibold py-1 px-3 rounded-lg shadow-sm hover:bg-white/20 hover:text-blue-100 transition-colors text-xs focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer"
+                aria-label="Reset filters"
+                >
+                  Reset
+                </button>
               </div>
               {/* Category filter */}
               <div>
